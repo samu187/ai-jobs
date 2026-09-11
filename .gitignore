@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Private workspace data and credentials
+user/
+apikey.txt
+**/apikey.txt
+cv.MD
+goals.MD
+imports/
+data/
+.DS_Store

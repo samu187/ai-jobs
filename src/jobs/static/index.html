@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job journal</title><link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/"><span class="brand-icon">j.</span> job journal<span class="personal">PERSONAL WORKSPACE</span></a><button id="refresh" class="quiet">↻ Refresh jobs</button></header>
+  <main class="workspace">
+    <aside class="sidebar" aria-label="Job list">
+      <div class="sidebar-head"><div class="eyebrow">YOUR NEXT CHAPTER</div><h1>Opportunities<span id="count">0</span></h1><p>A little closer to the right role.</p>
+        <input id="search" type="search" placeholder="Search title, company or source…" aria-label="Search jobs">
+        <div class="filters"><select id="filter" aria-label="Filter by state"><option value="all">All states</option><option>review</option><option>reject</option><option>accept</option><option>applied</option><option>interviewing</option></select><select id="sort" aria-label="Sort jobs"><option value="date">Newest first</option><option value="score">Best match</option></select></div>
+      </div>
+      <div id="job-list" class="job-list"></div>
+      <div class="sidebar-foot">Your search. Your pace.</div>
+    </aside>
+    <section id="detail" class="detail" aria-label="Selected job"><div class="empty"><span class="empty-symbol">↗</span><h2>Your next chapter starts here.</h2><p>Loading your opportunities…</p></div></section>
+  </main>
+  <div id="message" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
