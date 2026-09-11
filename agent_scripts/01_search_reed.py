@@ -1,8 +1,11 @@
 """Search Reed, replace the cached batch, and print compact candidate rows."""
 import argparse
 import json
+import sqlite3
 import sys
+from contextlib import closing
 from datetime import date, timedelta
+from jobs.db import DB_PATH, canonical_url
 from reed import get, posted_date, salary, save
 
 
@@ -11,6 +14,14 @@ def positive(value):
     if number < 1:
         raise argparse.ArgumentTypeError('must be at least 1')
     return number
+
+
+def existing_urls():
+    """Read every status without creating or changing the database."""
+    if not DB_PATH.exists():
+        return set()
+    with closing(sqlite3.connect(DB_PATH.as_uri() + '?mode=ro', uri=True)) as database:
+        return {canonical_url(row[0]) for row in database.execute('SELECT url FROM jobs')}
 
 
 def main():
@@ -25,6 +36,9 @@ def main():
     today = date.today()
     cutoff = today - timedelta(days=args.days - 1)
     rows, seen = [], set()
+    known_urls = existing_urls()
+    duplicates = 0
+    invalid_urls = 0
     excluded = 0
     inspected = 0
     exhausted = False
@@ -41,8 +55,20 @@ def main():
                 excluded += 1
                 continue
             job_id = job.get('jobId')
-            if not isinstance(job_id, int) or job_id <= 0 or job_id in seen:
+            if not isinstance(job_id, int) or job_id <= 0:
                 continue
+            url = job.get('jobUrl')
+            try:
+                if not isinstance(url, str):
+                    raise ValueError('Missing vacancy URL')
+                url = canonical_url(url)
+            except ValueError:
+                invalid_urls += 1
+                continue
+            if job_id in seen or url in known_urls:
+                duplicates += 1
+                continue
+            known_urls.add(url)
             seen.add(job_id)
             rows.append({'id': len(rows) + 1, 'posted_at': posted.isoformat(), 'search': job})
             if len(rows) >= args.limit:
@@ -59,12 +85,13 @@ def main():
                        'salary': salary(row['search'])} for row in rows], ensure_ascii=False))
     print(f'Saved imports/reed_jobs.json; window {cutoff} to {today}; inspected {inspected}; '
           f'excluded outside window/unknown date: {excluded}; '
+          f'duplicates skipped: {duplicates}; invalid URLs skipped: {invalid_urls}; '
           f'search exhausted: {exhausted}. Row IDs apply only to this batch.', file=sys.stderr)
 
 
 if __name__ == '__main__':
     try:
         main()
-    except (ValueError, OSError) as exc:
+    except (ValueError, OSError, sqlite3.Error) as exc:
         print(f'Search failed: {exc}', file=sys.stderr)
         sys.exit(1)
