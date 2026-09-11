@@ -1,6 +1,8 @@
 # Job journal
 
 A local app: Codex searches and assesses jobs; you review them.
+Run the web app to review, flag and apply to new roles.
+Run Codex to have an AI assistand analyse your CV, your career goals, and add new relevant jobs to the database, waiting for you to review them!
 
 ## Start
 
@@ -17,9 +19,10 @@ To install the standalone app, run `uv tool install .` from this folder. Then ru
 The app and repository scripts share one database per OS user via `platformdirs`: `~/Library/Application Support/ai-jobs/jobs.sqlite` on macOS, the XDG data directory's `ai-jobs/jobs.sqlite` on Linux, and local AppData's `ai-jobs/jobs.sqlite` on Windows. Run `ai-jobs --data-path` (or `uv run ai-jobs --data-path`) for the exact location. Package reinstalls do not remove your database.
 
 ## Find jobs
+Put your CV in `user/cv.MD`, preferences in `user/goals.MD`, and Reed API key in `user/apikey.txt`. These files are ignored by Git. 
 
-Put your CV in `user/cv.MD`, preferences in `user/goals.MD`, and Reed API key in `user/apikey.txt`. These files are ignored by Git. Ask Codex:
-
+# Open Codex from the project directory
+Ask codex:
 > Read AGENTS.md. Search Reed for London finance transformation roles posted in the last 7 days. Retrieve 20 candidates and assess the best 10.
 
 Codex checks your CV and goals, asks for missing choices, searches, retrieves selected descriptions, and adds assessments. Refresh the app to see them.
@@ -42,8 +45,6 @@ AGENTS.md                Codex instructions
 pyproject.toml           uv project and jobs command
 src/jobs/                web.py, db.py, static/
 agent_scripts/           numbered search, details and import scripts
-tests/                   isolated checks
 user/                    private CV, goals and Reed key
 imports/                 latest search and assessment files
-data/jobs.sqlite         legacy database retained after migration
 ```
