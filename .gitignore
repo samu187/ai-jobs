@@ -21,3 +21,8 @@ imports/*
 data/*
 !data/.gitkeep
 .DS_Store
+
+# Frontend tooling
+node_modules/
+test-results/
+playwright-report/

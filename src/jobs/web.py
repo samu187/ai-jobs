@@ -74,7 +74,7 @@ def main():
     
     with make_server('127.0.0.1', args.port, create_app()) as server:
         url = f'http://127.0.0.1:{server.server_port}'
-        print(f'Job journal: {url} (Ctrl+C to stop)', flush=True)
+        print(f'Your new job is waiting for you: {url} (Ctrl+C to stop)', flush=True)
         if not args.no_browser:
             webbrowser.open(url)
         try:

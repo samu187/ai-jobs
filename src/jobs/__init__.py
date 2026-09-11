@@ -1,1 +1,1 @@
-"""Personal job journal."""
+"""AI Jobs personal job-search app."""

@@ -1,7 +1,7 @@
 [project]
 name = "ai-jobs"
 version = "0.1.0"
-description = "Local job journal with agent-assisted Reed searches"
+description = "AI Jobs: local job review with agent-assisted Reed searches"
 readme = "README.md"
 authors = [
     { name = "samu187", email = "samuel-alciati@live.it" }

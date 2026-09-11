@@ -1,4 +1,4 @@
-# Job journal
+# AI Jobs
 
 A local app: Codex searches and assesses jobs; you review them.
 Run the web app to review, flag and apply to new roles.
@@ -48,3 +48,23 @@ agent_scripts/           numbered search, details and import scripts
 user/                    private CV, goals and Reed key
 imports/                 latest search and assessment files
 ```
+
+## Frontend development
+
+The React interface has two views: **Your Saved Jobs** (the default) and **Find a new Match ♥** (a placeholder). Saved jobs start with Review and Newest first; switching views preserves the current search, filters and selection.
+
+Status and ordering menus show their Option shortcuts: ⌥R Review, ⌥A Accepted, ⌥P Applied, ⌥I Interviewing, ⌥X Rejected, ⌥L All statuses, ⌥D Newest first, and ⌥S Best match. ⌥Space focuses search. Use ↑/↓ to browse job cards, or navigate an open menu; Escape closes the menu.
+
+React source lives in `frontend/`: `App.jsx`, `SavedJobsView.jsx`, `FindMatchView.jsx`, `Sidebar.jsx`, `JobCard.jsx`, `JobDetail.jsx`, and `FilterMenu.jsx`. Flask serves the committed local bundle in `src/jobs/static/app.js`; normal app startup does not need Node, a frontend server, or a CDN.
+
+After changing React source:
+
+```sh
+npm ci
+npm run build
+npm test
+npx playwright install chromium
+npm run test:browser
+```
+
+Commit the rebuilt bundle with source changes. Browser tests use sample data and intercepted API responses, without accessing the live database. Set `AI_JOBS_BROWSER` to an existing Chromium executable to use it for tests.
