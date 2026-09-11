@@ -16,7 +16,7 @@ On a new conversation, including a simple greeting such as “hi”, proactively
 Use `uv run python` from the root; uv installs the project and dependencies. The scripts read `user/apikey.txt` themselves. Never print/read the key into conversation, put it in command arguments, upload personal documents or submit applications.
 
 ```sh
-uv run python agent_scripts/01_search_reed.py --keywords "finance transformation" --location London --distance 10 --days 7 --limit 20
+uv run python agent_scripts/01_search_reed.py --keywords "keywords here" --location London --distance 10 --days 7 --limit 20
 ```
 
 Replace the example parameters with agreed choices. This overwrites `imports/reed_jobs.json`. Output includes only row `id`, title, company, location and salary. Descriptions stay in the cache. IDs are 1-based row indices, NOT Reed or database IDs; they expire on the next search. Finish selecting/retrieving a batch before searching again. Don't read the whole cache to shortlist.
