@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import Sidebar from './Sidebar';
-import JobDetail from './JobDetail';
-import {filterJobs, statusOptions, orderOptions} from './model';
+import Sidebar from '../components/Sidebar';
+import JobDetail from '../components/JobDetail';
+import {filterJobs, statusOptions, orderOptions} from '../model';
 export default function SavedJobsView({active, jobs, loading, busy, update, notify}) {
   const [search,setSearch]=useState(''), [status,setStatus]=useState('review'), [order,setOrder]=useState('date');
   const [selectedId,setSelectedId]=useState(null), [menu,setMenu]=useState(null);

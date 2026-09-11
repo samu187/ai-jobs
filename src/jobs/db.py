@@ -1,9 +1,6 @@
 """Validated job storage shared by the import command and web app."""
 import json
-import os
 import sqlite3
-import tempfile
-from contextlib import closing
 from contextlib import contextmanager
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -11,7 +8,7 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from platformdirs import user_data_path
 
 DB_PATH = user_data_path('ai-jobs', appauthor=False) / 'jobs.sqlite'
-STATES = ('review', 'reject', 'accept', 'applied', 'interviewing')
+STATES = ('review', 'rejected', 'applied', 'interviewing')
 TEXT_FIELDS = ('url', 'title', 'company', 'platform', 'description', 'ai_match_summary')
 OPTIONAL_TEXT = ('location', 'salary', 'experience_level', 'contract_type')
 REQUIRED = (*TEXT_FIELDS, 'posted_at', 'matching_skills', 'missing_skills', 'ai_match_score')
@@ -49,13 +46,11 @@ def init_db(path=DB_PATH):
             ai_match_score INTEGER NOT NULL CHECK(ai_match_score BETWEEN 0 AND 100),
             location TEXT, salary TEXT, experience_level TEXT, contract_type TEXT,
             status TEXT NOT NULL DEFAULT 'review'
-                CHECK(status IN ('review','reject','accept','applied','interviewing')),
+                CHECK(status IN ('review','rejected','applied','interviewing')),
             discovered_at TEXT NOT NULL, status_changed_at TEXT NOT NULL,
-            applied_at TEXT
+            applied_at TEXT,
+            favourite INTEGER NOT NULL DEFAULT 0 CHECK(favourite IN (0,1))
         )''')
-        columns = {row['name'] for row in con.execute('PRAGMA table_info(jobs)')}
-        if 'favourite' not in columns:
-            con.execute('ALTER TABLE jobs ADD COLUMN favourite INTEGER NOT NULL DEFAULT 0 CHECK(favourite IN (0,1))')
 
 
 def canonical_url(value):

@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {filterJobs,scoreClass,statusOptions,orderOptions} from './model.js';
+import {filterJobs,scoreClass,statusOptions,orderOptions} from '../model.js';
 test('scores change bands at 60 and 80',()=>{
   assert.deepEqual([0,59,60,79,80,100].map(scoreClass),['score-low','score-low','score-medium','score-medium','score-high','score-high']);
 });

@@ -1,6 +1,6 @@
 const {defineConfig} = require('@playwright/test');
 module.exports = defineConfig({
-  testDir:'frontend',
+  testDir:'tests',
   testMatch:'browser.spec.cjs',
   workers:1,
   use:{

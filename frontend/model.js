@@ -1,13 +1,12 @@
 export const statusOptions = [
   {value:'review', label:'Review', key:'R'},
-  {value:'accept', label:'Accepted', key:'A'},
-  {value:'applied', label:'Applied', key:'P'},
+  {value:'applied', label:'Applied', key:'A'},
   {value:'interviewing', label:'Interviewing', key:'I'},
-  {value:'reject', label:'Rejected', key:'X'},
+  {value:'rejected', label:'Rejected', key:'X'},
   {value:'all', label:'All statuses', key:'L'},
 ];
 export const orderOptions = [
-  {value:'date', label:'Newest first', key:'D'},
+  {value:'date', label:'Newest first', key:'N'},
   {value:'score', label:'Best match', key:'S'},
 ];
 export const scoreClass = score => score >= 80 ? 'score-high' : score >= 60 ? 'score-medium' : 'score-low';

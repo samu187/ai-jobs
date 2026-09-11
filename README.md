@@ -51,20 +51,45 @@ imports/                 latest search and assessment files
 
 ## Frontend development
 
-The React interface has two views: **Your Saved Jobs** (the default) and **Find a new Match ♥** (a placeholder). Saved jobs start with Review and Newest first; switching views preserves the current search, filters and selection.
+The React interface has two views: **Find your next Role ♥** (the default, a shuffled deck of Review jobs) and **Your Saved Jobs**. Saved jobs start with Review and Newest first; switching views preserves the current search, filters and selection.
 
-Status and ordering menus show their Option shortcuts: ⌥R Review, ⌥A Accepted, ⌥P Applied, ⌥I Interviewing, ⌥X Rejected, ⌥L All statuses, ⌥D Newest first, and ⌥S Best match. ⌥Space focuses search. Use ↑/↓ to browse job cards, or navigate an open menu; Escape closes the menu.
+Status and ordering menus show their Option shortcuts: ⌥R Review, ⌥A Applied, ⌥I Interviewing, ⌥X Rejected, ⌥L All statuses, ⌥N Newest first, and ⌥S Best match. ⌥Space focuses search. Use ↑/↓ to browse job cards, or navigate an open menu; Escape closes the menu.
 
-React source lives in `frontend/`: `App.jsx`, `SavedJobsView.jsx`, `FindMatchView.jsx`, `Sidebar.jsx`, `JobCard.jsx`, `JobDetail.jsx`, and `FilterMenu.jsx`. Flask serves the committed local bundle in `src/jobs/static/app.js`; normal app startup does not need Node, a frontend server, or a CDN.
+React source lives in `frontend/`: `views/` contains the two workspace views, `components/` contains reusable UI including the sidebar, cards, detail, action buttons, and filter menus, and `tests/` contains frontend checks. The entry point is `App.jsx`. All Node tooling, package files, and `node_modules/` live inside `frontend/`.
+
+Flask serves the committed local bundle in `src/jobs/static/app.js`; normal app startup does not need Node, a frontend server, or a CDN.
 
 After changing React source:
 
 ```sh
-npm ci
-npm run build
-npm test
-npx playwright install chromium
-npm run test:browser
+npm --prefix frontend ci
+npm --prefix frontend run build
+npm --prefix frontend test
+npm --prefix frontend exec -- playwright install chromium
+npm --prefix frontend run test:browser
 ```
 
 Commit the rebuilt bundle with source changes. Browser tests use sample data and intercepted API responses, without accessing the live database. Set `AI_JOBS_BROWSER` to an existing Chromium executable to use it for tests.
+
+### Job decisions
+
+New jobs default to Review. The only stored statuses are `review`, `rejected`, `applied`, and `interviewing`.
+
+- Review offers Reject and Apply with playful captions.
+- Rejected offers “Changed your mind?” and Apply.
+- Applied offers Reject and Interviewing.
+- Interviewing offers Reject and Back to applied for corrections.
+
+Apply records the status and opens the original listing; it does not submit an application. Rejecting and reapplying preserves the first application date. Captions are chosen when a job is opened and stay stable while viewing it.
+
+The one-off status migration is complete and is no longer part of app startup. Database initialization creates the current schema for new installations. Restart a running Flask process after updating the backend.
+
+Backend regression checks: `uv run python -m unittest discover -s tests -v`.
+
+### Match deck
+
+Find your next Role draws from the Review jobs already saved locally. Back revisits browsing history without undoing decisions; Skip leaves a job in Review; Reject and Apply save before advancing. After a round, Shuffle remaining jobs revisits skipped roles. Fresh Review jobs are added when you refresh.
+
+← opens Find your next Role and → opens Your Saved Jobs, except while editing text or using a filter menu. Both views stay mounted, preserving their card, search, filters and scroll position when switching. This browsing session resets on a full browser reload. Actions in either view share the same job data.
+
+Action buttons use fixed dimensions at each screen size, so random captions do not change their size. The deck and saved-job view share the same action component.

@@ -1,7 +1,7 @@
 import React from 'react';
 import FilterMenu from './FilterMenu';
 import JobCard from './JobCard';
-import {statusOptions, orderOptions} from './model';
+import {statusOptions, orderOptions} from '../model';
 export default function Sidebar({jobs, selectedId, onSelect, search, setSearch, searchRef, status, setStatus, order, setOrder, menu, setMenu, loading}) {
   return <aside className="sidebar" aria-label="Job list">
     <div className="sidebar-head"><div className="eyebrow">AI-ASSESSED ROLES</div><h1>Your jobs<span id="count">{jobs.length}</span></h1><p>Find your fit. Plan your next move.</p>
