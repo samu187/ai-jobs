@@ -7,10 +7,14 @@ A local app: Codex searches and assesses jobs; you review them.
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run from this folder:
 
 ```sh
-uv run web
+uv run ai-jobs
 ```
 
 Your browser opens at http://127.0.0.1:5050. Keep the terminal running; Ctrl+C stops the app. Use `--port 5051` for another port, or `--no-browser` to skip opening a tab. You can also ask Codex to start it.
+
+To install the standalone app, run `uv tool install .` from this folder. Then run `ai-jobs` from any directory. If your shell cannot find it, run `uv tool update-shell` and restart your terminal. After code updates, reinstall with `uv tool install --reinstall .`. Use `uv run ai-jobs` within this repository. If another program named ai-jobs is installed, use the full executable path in uv's tool bin directory (`uv tool dir --bin`).
+
+The app and repository scripts share one database per OS user via `platformdirs`: `~/Library/Application Support/ai-jobs/jobs.sqlite` on macOS, the XDG data directory's `ai-jobs/jobs.sqlite` on Linux, and local AppData's `ai-jobs/jobs.sqlite` on Windows. Run `ai-jobs --data-path` (or `uv run ai-jobs --data-path`) for the exact location. Package reinstalls do not remove your database.
 
 ## Find jobs
 
@@ -35,13 +39,11 @@ Search, filter by state and sort by date or score. Apply marks a job applied and
 
 ```text
 AGENTS.md                Codex instructions
-pyproject.toml           uv project and web command
+pyproject.toml           uv project and jobs command
 src/jobs/                web.py, db.py, static/
 agent_scripts/           numbered search, details and import scripts
 tests/                   isolated checks
 user/                    private CV, goals and Reed key
 imports/                 latest search and assessment files
-data/jobs.sqlite         existing database
+data/jobs.sqlite         legacy database retained after migration
 ```
-
-Run tests: `uv run python -m unittest discover -s tests -v`. Personal files, imports, data and the virtual environment are gitignored. Stop the app and importer before copying `data/` for backup. Run from this checkout with uv; no frontend build step or hosted service is needed.

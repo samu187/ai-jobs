@@ -32,9 +32,12 @@ function render() {
   $('#count').textContent = visible.length;
   const list = $('#job-list'); list.replaceChildren();
   for (const job of visible) {
-    const card = node('button', `job-card${job.id === selectedId ? ' selected' : ''}`);
+    const card = node('button', `job-card${job.id === selectedId ? ' selected' : ''}${job.favourite ? ' favourite' : ''}`);
     card.setAttribute('aria-pressed', String(job.id === selectedId));
     const top = node('div', 'card-top'); top.append(node('span', 'company', job.company), node('span', 'mini-score', `${job.ai_match_score} match`));
+    if (job.favourite) {
+      const heart = node('span', 'card-heart', '♥'); heart.setAttribute('aria-label', 'Favourite'); top.prepend(heart);
+    }
     const bottom = node('div', 'card-bottom'); bottom.append(node('span', '', dateLabel(job.posted_at)), badge(job.status));
     card.append(top, node('h2', '', job.title), node('p', 'summary', job.ai_match_summary), bottom);
     card.onclick = () => { if (!busy) { selectedId = job.id; render(); } };
@@ -54,7 +57,13 @@ function renderDetail(job) {
   const heading = node('div', 'detail-heading');
   const identity = node('div'); identity.append(node('div', 'eyebrow', `${job.platform} / ${job.company}`), node('h2', 'job-title', job.title));
   const score = node('div', 'score'); score.append(node('strong', '', job.ai_match_score), node('span', '', 'MATCH / 100'));
-  heading.append(identity, score);
+  const corner = node('div', 'detail-corner');
+  const heart = node('button', `favourite-button${job.favourite ? ' active' : ''}`, job.favourite ? '♥' : '♡');
+  heart.setAttribute('aria-label', job.favourite ? 'Remove from favourites' : 'Add to favourites');
+  heart.title = heart.getAttribute('aria-label');
+  heart.setAttribute('aria-pressed', String(job.favourite)); heart.disabled = busy;
+  heart.onclick = () => updateFavourite(job);
+  corner.append(heart, score); heading.append(identity, corner);
   const metadata = node('div', 'metadata');
   for (const text of [job.location || 'Location not listed', job.salary || 'Salary not listed', job.contract_type, job.experience_level, `Posted ${dateLabel(job.posted_at)}`].filter(Boolean)) metadata.append(node('span', '', text));
   const assessment = node('section', 'assessment'); assessment.append(node('div', 'eyebrow', 'THE FIT'), node('p', '', job.ai_match_summary));
@@ -92,6 +101,16 @@ async function updateStatus(job, status) {
     jobs = jobs.map(item => item.id === updated.id ? updated : item);
     notice(`Marked as ${status}.`); return true;
   } catch (error) { notice(error.message); return false; }
+  finally { busy = false; render(); }
+}
+async function updateFavourite(job) {
+  if (busy) return;
+  busy = true; renderDetail(job);
+  try {
+    const updated = await request(`/api/jobs/${job.id}/favourite`, {method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({favourite:!job.favourite})});
+    jobs = jobs.map(item => item.id === updated.id ? updated : item);
+    notice(updated.favourite ? 'Added to favourites.' : 'Removed from favourites.');
+  } catch (error) { notice(error.message); }
   finally { busy = false; render(); }
 }
 async function load() {

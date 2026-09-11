@@ -7,10 +7,10 @@ authors = [
     { name = "samu187", email = "samuel-alciati@live.it" }
 ]
 requires-python = ">=3.12"
-dependencies = ["flask>=3.1,<4"]
+dependencies = ["flask>=3.1,<4", "platformdirs>=4,<5"]
 
 [project.scripts]
-web = "jobs.web:main"
+ai-jobs = "jobs.web:main"
 
 [tool.uv.build-backend]
 module-name = "jobs"

@@ -1,12 +1,16 @@
 """Validated job storage shared by the import command and web app."""
 import json
+import os
 import sqlite3
+import tempfile
+from contextlib import closing
 from contextlib import contextmanager
 from datetime import date, datetime, timezone
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from platformdirs import user_data_path
 
-DB_PATH = Path(__file__).resolve().parents[2] / 'data' / 'jobs.sqlite'
+DB_PATH = user_data_path('ai-jobs', appauthor=False) / 'jobs.sqlite'
 STATES = ('review', 'reject', 'accept', 'applied', 'interviewing')
 TEXT_FIELDS = ('url', 'title', 'company', 'platform', 'description', 'ai_match_summary')
 OPTIONAL_TEXT = ('location', 'salary', 'experience_level', 'contract_type')
@@ -49,6 +53,9 @@ def init_db(path=DB_PATH):
             discovered_at TEXT NOT NULL, status_changed_at TEXT NOT NULL,
             applied_at TEXT
         )''')
+        columns = {row['name'] for row in con.execute('PRAGMA table_info(jobs)')}
+        if 'favourite' not in columns:
+            con.execute('ALTER TABLE jobs ADD COLUMN favourite INTEGER NOT NULL DEFAULT 0 CHECK(favourite IN (0,1))')
 
 
 def canonical_url(value):
@@ -128,6 +135,7 @@ def import_jobs(jobs, path=DB_PATH):
 
 def decode(row):
     result = dict(row)
+    result['favourite'] = bool(result['favourite'])
     for field in ('matching_skills', 'missing_skills'):
         result[field] = json.loads(result[field])
     return result
@@ -150,4 +158,14 @@ def set_status(job_id, status, path=DB_PATH):
             con.execute('''UPDATE jobs SET status = ?, status_changed_at = ?,
                 applied_at = CASE WHEN ? = 'applied' THEN COALESCE(applied_at, ?) ELSE applied_at END
                 WHERE id = ?''', (status, timestamp, status, timestamp, job_id))
+        return decode(con.execute('SELECT * FROM jobs WHERE id = ?', (job_id,)).fetchone())
+
+
+def set_favourite(job_id, favourite, path=DB_PATH):
+    if type(favourite) is not bool:
+        raise ValueError('favourite must be a boolean')
+    with connection(path) as con:
+        cursor = con.execute('UPDATE jobs SET favourite = ? WHERE id = ?', (favourite, job_id))
+        if not cursor.rowcount:
+            raise KeyError(job_id)
         return decode(con.execute('SELECT * FROM jobs WHERE id = ?', (job_id,)).fetchone())
