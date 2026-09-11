@@ -10,11 +10,14 @@ wheels/
 .venv
 
 # Private workspace data and credentials
-user/
+user/*
+!user/.gitkeep
 apikey.txt
 **/apikey.txt
 cv.MD
 goals.MD
-imports/
-data/
+imports/*
+!imports/.gitkeep
+data/*
+!data/.gitkeep
 .DS_Store
