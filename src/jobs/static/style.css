@@ -67,6 +67,8 @@ kbd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size
 .action-context p{margin:6px 0 0}
 .action-buttons{display:flex;gap:12px;margin-left:auto;flex-wrap:wrap}
 .decision-button{display:flex;align-items:center;gap:12px;min-height:60px;border-radius:10px;border:1px solid transparent;padding:12px 20px;text-align:left}
+.open-action{text-decoration:none;background:#f3f6ef;color:#42624e;border-color:var(--line)}
+.open-action:hover{background:#e8eee2;border-color:#b9c9b6}
 .decision-button .decision-symbol{font-size:24px;line-height:1}
 .decision-copy{display:flex;flex-direction:column;gap:4px}
 .decision-copy small{font-size:9px;letter-spacing:1px;text-transform:uppercase;opacity:.8}
@@ -117,3 +119,4 @@ kbd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size
 @media(max-width:600px){.actions{padding:18px 12px}.action-buttons,.deck-actions .action-buttons{grid-template-columns:repeat(2,144px);gap:8px}.decision-button{width:144px;height:82px;min-height:82px;padding:10px;gap:8px}.decision-copy strong{font-size:12px}.match-card{flex:none;min-height:380px;overflow:visible}.match-card>.detail{border-radius:20px;overflow:hidden}.match-card .job-title{font-size:27px}.match-card .actions{padding:16px 10px}.match-deck-view{height:auto;min-height:calc(100dvh - 110px);overflow:visible}.match-card .job-detail{padding:24px 18px}.deck-hint{padding-bottom:12px}}
 
 .nav-briefcase{display:inline-block;vertical-align:-3px;margin-left:5px}
+.review-role-link{display:inline-flex;align-items:center;gap:5px;margin-top:14px;color:#42624e;font-size:12px;font-weight:600;text-decoration:underline;text-underline-offset:3px}.review-role-link:hover{color:#1d4838}

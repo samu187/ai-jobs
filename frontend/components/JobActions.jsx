@@ -8,12 +8,14 @@ const captions = {
 };
 const pick = choices => choices[Math.floor(Math.random()*choices.length)];
 
-function ActionButton({kind, symbol, label, caption, busy, onClick}) {
+function ActionButton({kind, symbol, label, caption, busy, onClick, href}) {
+  const content=<><span className="decision-symbol" aria-hidden="true">{symbol}</span>
+    <span className="decision-copy"><small>{label}</small><strong>{caption}</strong></span></>;
+  if (href) return <a className={'decision-button '+kind+'-action'} href={href} target="_blank" rel="noreferrer"
+    aria-label={label+': '+caption} title={label}>{content}</a>;
   return <button className={'decision-button '+kind+'-action'} disabled={busy}
     aria-label={label+': '+caption} title={label} onClick={onClick}>
-    <span className="decision-symbol" aria-hidden="true">{symbol}</span>
-    <span className="decision-copy"><small>{label}</small><strong>{caption}</strong></span>
-  </button>;
+    {content}</button>;
 }
 
 export default function JobActions({job, busy, update, notify, onBack, onSkip, canGoBack}) {
